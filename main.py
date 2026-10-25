@@ -7,6 +7,13 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+# 1. Our static menu list (simulating a database)
+MENU_ITEMS = {
+    "burger": {"price": 9.99, "category": "Main Course", "spicy": False},
+    "pizza": {"price": 12.99, "category": "Main Course", "spicy": False},
+    "tacos": {"price": 8.50, "category": "Appetizer", "spicy": True}
+}
+
 # Define a route (Step 3: Your Python Code Brain)
 @app.get("/")
 def read_root():
@@ -17,13 +24,14 @@ def read_root():
     # - Open a local file
     # - Call an AI model
     # ---------------------------------------------
-    return {"message": "Hello from localhost restaurant!", "status": "active"}
+    return {"message": "Welcome to the Localhost Restaurant!", "status": "active"}
 
 
-@app.get("/hello")
-def hello_on_menu():
-    return {"hello": "hello is on the menu"}
-
-# Allows you to run the script directly via Python (Step 1: Gatekeeper)
-#if __name__ == "__main__":
-   # uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+# 2. Dynamic Route using a Path Parameter ({item_name})
+@app.get("/menu/{item_name}")
+def get_menu_item(item_name: str):
+    # Check if the requested item exists in our dictionary
+    if item_name in MENU_ITEMS:
+        return {"item": item_name, "details": MENU_ITEMS[item_name]}
+    else:
+        return {"error": "Dish not found on the menu!"}, 404
